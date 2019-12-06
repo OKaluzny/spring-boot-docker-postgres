@@ -1,0 +1,30 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3.7'
+# Define services
+services:
+  # App backend service
+  app:
+    image: spring-boot2-rest-api-postgresql:latest
+    container_name: web-app
+    # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    ports:
+      - "8080:8080"
+    # This service depends on postgres. Start that first.
+    depends_on:
+      - db
+  # Database Service (Postgres)
+  db:
+    image: postgres:12
+    container_name: postgres-db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: book_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+volumes:
+  postgres-data:
