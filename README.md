@@ -3,22 +3,8 @@
 
 [![Build Status](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres.svg?branch=master)](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres)
 
-### Technology stack:
-
-* Spring Boot 2;
-* Spring Web;
-* Spring Data Jpa;
-* Spring Data Rest;
-* Maven;
-* PostgreSQL database;
-* Docker;
-* Lombok;
-* Spotify plugin;
-* Spring Security (as basic authentication).
-
 ## How it works:
-**1. Docker**
-* First you need to install docker;
+**1. Docker. First you need to install docker**
 * Download Docker [Here](https://localhost:8443/api/v1/objects). Hint: Enable Hyper-V feature on windows and restart;
 * Then open powershell and check:
 ```bash
@@ -47,24 +33,26 @@ git clone https://github.com/OKaluzny/spring-boot-docker-postgres.git
 ```
 * Build the maven project:
 ```bash
-* mvn clean install
+mvn clean install
 ```
 * Now run:
 ```bash
-* docker-compose up
+docker-compose up
 ```
 **3. Docker control commands**
 * Check all the images you have:
 ```bash
 docker images
 ```
-*  Stop containers:
-```bash
-* docker-compose down
-```
 * If you have to want see running containers:
 ```bash
 docker ps
 ```
+**4. End stop app**
+*  Stop containers:
+```bash
+docker-compose down
+```
+
 
 
