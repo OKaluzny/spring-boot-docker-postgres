@@ -4,7 +4,8 @@ version: '3.7'
 services:
   # App backend service
   app:
-    image: spring-boot2-rest-api-postgresql:latest
+    image: spring-boot-docker-postgres:latest
+    # Give the container the name web-app. You can changes to something else.
     container_name: web-app
     # Forward the exposed port 8080 on the container to port 8080 on the host machine
     ports:
@@ -14,13 +15,19 @@ services:
       - db
   # Database Service (Postgres)
   db:
+    # Use the Docker Image postgres. This will pull the 12 version.
     image: postgres:12
+    # Give the container the name postgres-db. You can changes to something else.
     container_name: postgres-db
+    # Set a volume some that database is not lost after shutting down the container.
+    # I used the name postgres-data but you can changed it to something else.
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
     ports:
       - "5432:5432"
     restart: always
+    # Setup the username, password, and database name. You can changes these values.
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin

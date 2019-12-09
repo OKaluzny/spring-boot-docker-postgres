@@ -12,7 +12,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(value = "api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
 public class BookRestController {
