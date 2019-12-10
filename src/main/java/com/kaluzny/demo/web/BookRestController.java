@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
@@ -18,6 +20,12 @@ import java.util.Collection;
 public class BookRestController {
 
     private final BookRepository repository;
+
+    @Transactional
+    @PostConstruct
+    public void init() {
+        repository.save(new Book(1L, "Java 11", "Programming"));
+    }
 
     @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED)

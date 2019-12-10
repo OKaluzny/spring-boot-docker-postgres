@@ -39,6 +39,8 @@ mvn clean install
 ```bash
 docker-compose up
 ```
+* Go to [http://localhost:8080/api/books](http://localhost:8080/api/books) to test and must specify a username: `user` and password: `user`
+
 **3. Docker control commands**
 * Check all the images you have:
 ```bash
