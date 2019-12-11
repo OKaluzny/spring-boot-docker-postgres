@@ -10,12 +10,12 @@
 ```bash
 docker info
 ```
-or
+or, and you see versions docker & docker compose
 ```bash
-docker --version
+docker -v
 ```
 ```bash
-docker-compose --version
+docker-compose -v
 ```
 * Now we need to set up postgres database. We can get it from the Docker Hub. But we need to create a volume for store data:
 ```bash
@@ -23,7 +23,7 @@ docker create -v /var/lib/postgresql/data --name PostgresData alpine
 ```
 * Create the database:
 ```bash
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=admin -d --volumes-from PostgresData postgres
+docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=postgres -d --volumes-from PostgresData postgres
 ```
 
 **2. Spring boot app**
@@ -39,7 +39,7 @@ mvn clean install
 ```bash
 docker-compose up
 ```
-* Go to [http://localhost:8080/api/books](http://localhost:8080/api/books) to test and must specify a username: `user` and password: `user`
+* Go to [http://localhost:8080/api/automobiles](http://localhost:8080/api/automobiles) to test and must specify a username: `user` and password: `user`
 
 **3. Docker control commands**
 * Check all the images you have:

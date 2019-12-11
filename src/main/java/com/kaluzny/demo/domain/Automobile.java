@@ -14,11 +14,11 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Book {
+public class Automobile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String name;
-    private String description;
+    private String color;
 }

@@ -6,6 +6,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource
-public interface BookRepository extends JpaRepository<Book, Long> {
-    List<Book> findByName(String name);
+public interface AutomobileRepository extends JpaRepository<Automobile, Long> {
+    List<Automobile> findByName(String name);
 }
