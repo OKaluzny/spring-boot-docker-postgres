@@ -17,17 +17,8 @@ docker -v
 ```bash
 docker-compose -v
 ```
-* Now we need to set up postgres database. We can get it from the Docker Hub. But we need to create a volume for store data:
-```bash
-docker create -v /var/lib/postgresql/data --name PostgresData alpine
-```
-* Create the database:
-```bash
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=postgres -d --volumes-from PostgresData postgres
-```
-
 **2. Spring boot app**
-* Clone the repository
+* Clone the repository:
 ```bash
 git clone https://github.com/OKaluzny/spring-boot-docker-postgres.git
 ```
@@ -39,7 +30,14 @@ mvn clean install
 ```bash
 docker-compose up
 ```
-* Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/api/automobiles) to test and must specify a username: `user` and password: `user`
+Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/api/automobiles) to test and would specify basic authorization a username: `user` and password: `user` or username: `admin` and password: `admin`
+
+* GET request to `/demo/api/automobiles/` returns a list of "automobiles";
+* GET request to `/demo/api/automobiles/1` returns the "automobile" with ID 1;
+* POST request to `/demo/api/automobiles/` with a "automobile" object as JSON creates a new "automobile";
+* PUT request to `/demo/api/automobiles/3` with a "automobile" object as JSON updates the "automobile" with ID 3;
+* DELETE request to `/demo/api/automobiles/4` deletes the "automobile" with ID 4;
+* DELETE request to `/demo/api/automobiles/` deletes all the "automobiles".
 
 **3. Docker control commands**
 * Check all the images you have:
