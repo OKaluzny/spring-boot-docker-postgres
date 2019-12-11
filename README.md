@@ -39,7 +39,7 @@ mvn clean install
 ```bash
 docker-compose up
 ```
-* Go to [http://localhost:8080/api/automobiles](http://localhost:8080/api/automobiles) to test and must specify a username: `user` and password: `user`
+* Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/api/automobiles) to test and must specify a username: `user` and password: `user`
 
 **3. Docker control commands**
 * Check all the images you have:
