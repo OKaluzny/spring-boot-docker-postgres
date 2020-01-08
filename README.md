@@ -5,7 +5,7 @@
 
 ## How it works:
 **1. Docker. First you need to install docker**
-* Download Docker [Here](https://localhost:8443/api/v1/objects). Hint: Enable Hyper-V feature on windows and restart;
+* Download Docker [Here](https://docs.docker.com/docker-for-windows/install/). Hint: Enable Hyper-V feature on windows and restart;
 * Then open powershell and check:
 ```bash
 docker info
