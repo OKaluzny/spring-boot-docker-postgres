@@ -1,5 +1,6 @@
 package com.kaluzny.demo.web;
 
+import com.kaluzny.demo.api.AutomobileResource;
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.Collection;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
-public class AutomobileRestController {
+public class AutomobileRestController implements AutomobileResource {
 
     private final AutomobileRepository repository;
 
@@ -29,6 +30,7 @@ public class AutomobileRestController {
 
     @PostMapping("/automobiles")
     @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public Automobile saveAutomobile(@RequestBody Automobile automobile) {
         log.info("saveAutomobile() - start: automobile = {}", automobile);
         Automobile savedAutomobile = repository.save(automobile);
@@ -38,6 +40,7 @@ public class AutomobileRestController {
 
     @GetMapping("/automobiles")
     @ResponseStatus(HttpStatus.OK)
+    @Override
     public Collection<Automobile> getAllAutomobiles() {
         log.info("getAllAutomobiles() - start");
         Collection<Automobile> collection = repository.findAll();
@@ -47,6 +50,7 @@ public class AutomobileRestController {
 
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Override
     public Automobile getAutomobileById(@PathVariable Long id) {
         log.info("getAutomobileById() - start: id = {}", id);
         Automobile receivedAutomobile = repository.findById(id)
@@ -57,6 +61,7 @@ public class AutomobileRestController {
 
     @GetMapping(value = "/automobiles", params = {"name"})
     @ResponseStatus(HttpStatus.OK)
+    @Override
     public Collection<Automobile> findAutomobileByName(@RequestParam(value = "name") String name) {
         log.info("findAutomobileByName() - start: name = {}", name);
         Collection<Automobile> collection = repository.findByName(name);
@@ -66,6 +71,7 @@ public class AutomobileRestController {
 
     @PutMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Override
     public Automobile refreshAutomobile(@PathVariable("id") long id, @RequestBody Automobile automobile) {
         log.info("refreshAutomobile() - start: id = {}, automobile = {}", id, automobile);
         Automobile updatedAutomobile = repository.findById(id)
@@ -81,6 +87,7 @@ public class AutomobileRestController {
 
     @DeleteMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void removeAutomobileById(@PathVariable Long id) {
         log.info("removeAutomobileById() - start: id = {}", id);
         repository.deleteById(id);
@@ -89,6 +96,7 @@ public class AutomobileRestController {
 
     @DeleteMapping("/automobiles")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void removeAllAutomobiles() {
         log.info("removeAllAutomobiles() - start");
         repository.deleteAll();
