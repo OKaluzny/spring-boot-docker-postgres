@@ -21,14 +21,16 @@ import javax.validation.constraints.NotNull;
 public interface AutomobileResource {
 
     @Operation(summary = "Add a new Automobile", description = " ", tags = {"Automobile"})
+  //  @Schema(implementation = Automobile.class)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Automobile created",
-                    content = @Content(schema = @Schema(implementation = Automobile.class))),
+            @ApiResponse(responseCode = "201", description = "Automobile created"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "409", description = "Automobile already exists")})
     Automobile saveAutomobile(
             @Parameter(
-                    description = "Automobile", required = true, schema = @Schema(implementation = Automobile.class))
+                    description = "Automobile",
+                    required = true,
+                    schema = @Schema(implementation = Automobile.class))
             @NotNull @RequestBody Automobile automobile);
 
     @Operation(summary = "Find all Automobiles", description = " ", tags = {"Automobile"})

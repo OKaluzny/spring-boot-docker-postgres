@@ -26,11 +26,10 @@ public class Automobile {
     private Long id;
 
     @Schema(description = "Name of the Automobile.", example = "Volvo", required = true)
-    @NotBlank
     @Size(max = 50)
     private String name;
 
     @Schema(description = "Color of the Automobile.", example = "Red", required = true)
-    @NotBlank
+    @Size(max = 50)
     private String color;
 }
