@@ -7,7 +7,6 @@ spring:
     user:
       name: user
       password: user
-
   # Database
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -29,11 +28,14 @@ logging:
   pattern:
     console: "%d %-5level %logger : %msg%n"
   level:
-    org.springframework: INFO
-    org.hibernate: DEBUG
-    com.kaluzny.demo: info
+    org.springframework: info
+    org.hibernate: debug
 # Server configuration
 server:
   port: 8080 #set your port
   servlet:
     context-path: /demo
+# Swagger configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html # swagger-ui custom path

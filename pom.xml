@@ -18,7 +18,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <swagger.version>2.9.2</swagger.version>
+        <openApi.version>1.2.19</openApi.version>
     </properties>
 
     <dependencies>
@@ -65,21 +65,11 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- swagger -->
+        <!-- openAPI (swagger) -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.plugin</groupId>
-            <artifactId>spring-plugin-core</artifactId>
-            <version>1.2.0.RELEASE</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${openApi.version}</version>
         </dependency>
     </dependencies>
 

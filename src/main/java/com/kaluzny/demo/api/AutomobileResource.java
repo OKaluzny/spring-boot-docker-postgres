@@ -1,31 +1,43 @@
 package com.kaluzny.demo.api;
 
 import com.kaluzny.demo.domain.Automobile;
-import io.swagger.annotations.*;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.constraints.NotNull;
 
-@Api(value = "TruckResource", tags = "microservice-assistant")
-@SwaggerDefinition(tags = @Tag(name = "microservice-assistant", description = "Resource interface for microservice-assistant"))
+@Tag(name = "Automobile", description = "the Automobile API")
 public interface AutomobileResource {
 
-    @ApiOperation(value = "Endpoint to create an automobile", response = Automobile.class)
+    @Operation(summary = "Add a new Automobile", description = " ", tags = {"Automobile"})
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Created"),
-            @ApiResponse(code = 201, message = " ")})
+            @ApiResponse(responseCode = "201", description = "Automobile created",
+                    content = @Content(schema = @Schema(implementation = Automobile.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "409", description = "Automobile already exists")})
     Automobile saveAutomobile(
-            @ApiParam("Automobile")
-            @NotNull
-            @RequestBody Automobile automobile);
+            @Parameter(
+                    description = "Automobile", required = true, schema = @Schema(implementation = Automobile.class))
+            @NotNull @RequestBody Automobile automobile);
 
-    @ApiOperation(value = "Endpoint to get Automobile by id", response = Automobile.class)
-    @ApiResponse(code = 200, message = "Success")
+    @Operation(summary = "Find all Automobiles", description = " ", tags = {"Automobile"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Automobile.class))))})
     Collection<Automobile> getAllAutomobiles();
 
+    ////
     Automobile getAutomobileById(@PathVariable Long id);
 
     Collection<Automobile> findAutomobileByName(@RequestParam(value = "name") String name);
