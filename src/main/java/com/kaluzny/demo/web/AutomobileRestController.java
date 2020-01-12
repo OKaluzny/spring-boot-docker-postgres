@@ -72,7 +72,7 @@ public class AutomobileRestController implements AutomobileResource {
     @PutMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Override
-    public Automobile refreshAutomobile(@PathVariable("id") long id, @RequestBody Automobile automobile) {
+    public Automobile refreshAutomobile(@PathVariable("id") Long id, @RequestBody Automobile automobile) {
         log.info("refreshAutomobile() - start: id = {}, automobile = {}", id, automobile);
         Automobile updatedAutomobile = repository.findById(id)
                 .map(entity -> {
