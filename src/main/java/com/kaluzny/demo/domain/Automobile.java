@@ -1,14 +1,12 @@
 package com.kaluzny.demo.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import lombok.*;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
+import lombok.*;
 
 
 @Entity
@@ -18,9 +16,10 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Schema(name = "Automobile", description = "Data object for an automobile", oneOf = Automobile.class)
 public class Automobile {
 
-    @Schema(description = "Unique identifier of the Automobile.", example = "1", required = true)
+    @Schema(description = "Unique identifier of the Automobile.", example = "1", required = false)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
