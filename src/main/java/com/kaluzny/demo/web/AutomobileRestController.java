@@ -2,13 +2,6 @@ package com.kaluzny.demo.web;
 
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,11 +11,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,8 +46,7 @@ public class AutomobileRestController {
     @PostMapping("/automobiles")
     @ResponseStatus(HttpStatus.CREATED)
     public Automobile saveAutomobile(
-            @Parameter(description = "Automobile", required = true, schema = @Schema(implementation = Automobile.class))
-            @NotNull @RequestBody Automobile automobile) {
+            @Parameter(description = "Automobile", required = true) @NotNull @RequestBody Automobile automobile) {
         log.info("saveAutomobile() - start: automobile = {}", automobile);
         Automobile savedAutomobile = repository.save(automobile);
         log.info("saveAutomobile() - end: savedAutomobile = {}", savedAutomobile.getId());
@@ -101,7 +99,7 @@ public class AutomobileRestController {
         return collection;
     }
 
-    @Operation(summary = "Update an existing Automobile", description = "", tags = {"Automobile"})
+    @Operation(summary = "Update an existing Automobile", description = "need to fill", tags = {"Automobile"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
@@ -110,10 +108,9 @@ public class AutomobileRestController {
     @PutMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Automobile refreshAutomobile(
-            @Parameter(description = "Id of the Automobile to be update. Cannot be empty.",
-                    required = true) @PathVariable("id") Long id,
-            @Parameter(description = "Automobile to update.",
-                    required = true, schema = @Schema(implementation = Automobile.class))
+            @Parameter(description = "Id of the Automobile to be update. Cannot be empty.", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "Automobile to update.", required = true)
             @RequestBody Automobile automobile) {
         log.info("refreshAutomobile() - start: id = {}, automobile = {}", id, automobile);
         Automobile updatedAutomobile = repository.findById(id)
@@ -127,15 +124,15 @@ public class AutomobileRestController {
         return updatedAutomobile;
     }
 
-    @Operation(summary = "Deletes a Automobile", description = "", tags = {"Automobile"})
+    @Operation(summary = "Deletes a Automobile", description = "need to fill", tags = {"Automobile"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "404", description = "Automobile not found")})
     @DeleteMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeAutomobileById(
-            @Parameter(description = "Id of the Automobile to be delete. Cannot be empty.",
-                    required = true) @PathVariable("id") Long id) {
+            @Parameter(description = "Id of the Automobile to be delete. Cannot be empty.", required = true)
+            @PathVariable Long id) {
         log.info("removeAutomobileById() - start: id = {}", id);
         repository.deleteById(id);
         log.info("removeAutomobileById() - end: id = {}", id);
