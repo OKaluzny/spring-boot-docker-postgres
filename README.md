@@ -39,6 +39,10 @@ Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/ap
 * DELETE request to `/demo/api/automobiles/4` deletes the "automobile" with ID 4;
 * DELETE request to `/demo/api/automobiles/` deletes all the "automobiles".
 
+or use swagger api [http://localhost:8080/demo/swagger-ui/index.html](http://localhost:8080/demo/swagger-ui/index.html)
+
+and generation api docks [http://localhost:8080/demo/v3/api-docs.yaml](http://localhost:8080/demo/v3/api-docs.yaml)
+
 **3. Docker control commands**
 * Check all the images you have:
 ```bash

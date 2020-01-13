@@ -19,7 +19,7 @@ import java.util.Collection;
 @Tag(name = "Automobile", description = "the Automobile API")
 public interface AutomobileResource {
 
-    @Operation(summary = "Add a new Automobile", description = " ", tags = {"Automobile"})
+    @Operation(summary = "Add a new Automobile", description = "endpoint", tags = {"Automobile"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Automobile created"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
