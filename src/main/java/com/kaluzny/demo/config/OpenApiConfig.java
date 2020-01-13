@@ -20,7 +20,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                        .title("Automobile Application API")
+                        .title("Automobile API")
                         .description(" Spring Boot RESTful service using springdoc-openapi and OpenAPI 3."));
     }
 }
