@@ -70,7 +70,7 @@ public class AutomobileRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(schema = @Schema(implementation = Automobile.class))),
-            @ApiResponse(responseCode = "404", description = "Contact not found")})
+            @ApiResponse(responseCode = "404", description = "Automobile not found")})
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Automobile getAutomobileById(
