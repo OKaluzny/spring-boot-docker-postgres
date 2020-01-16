@@ -1,5 +1,11 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
 version: '3.7'
+networks:
+  backend:
+   name: app
+   driver: bridge
+volumes:
+  postgres-data:
 # Define services
 services:
   # App backend service
@@ -15,6 +21,12 @@ services:
     # This service depends on postgres. Start that first.
     depends_on:
       - db
+    # Service health check
+    healthcheck:
+      test: curl -f http://localhost:8080/demo/profile || exit 1
+      interval: 1m
+      timeout: 10s
+      retries: 2
   # Database Service (Postgres)
   db:
     # Use the Docker Image postgres. This will pull the 12 version.
@@ -37,9 +49,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: automobiles
       PGDATA: /var/lib/postgresql/data/pgdata
-volumes:
-  postgres-data:
-
-networks:
-  backend:
-    name: my_network
+    # Service health check
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1m
+      timeout: 10s
+      retries: 2
