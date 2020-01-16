@@ -51,7 +51,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     # Service health check
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: pg_isready -U postgres
       interval: 1m
       timeout: 10s
       retries: 2
