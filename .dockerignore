@@ -1,0 +1,5 @@
+.git
+.settings
+.idea
+**/*.class
+*.md
