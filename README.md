@@ -50,6 +50,8 @@ or use Swagger API [http://localhost:8080/demo/swagger-ui.html](http://localhost
 
 and generation API docks [http://localhost:8080/demo/v3/api-docs.yaml](http://localhost:8080/demo/v3/api-docs.yaml)
 
+* Do not forget, if you see db, open the Windows Services Manager on your Windows 10 computer and stop postgres
+
 **3. Docker control commands**
 * Check all the images you have:
 ```bash
