@@ -146,4 +146,15 @@ public class AutomobileRestController {
         repository.deleteAll();
         log.info("removeAllAutomobiles() - end");
     }
+
+    @GetMapping(value = "/automobiles", params = {"color"})
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Automobile> findAutomobileByColor(
+            @Parameter(description = "Name of the Automobile to be obtained. Cannot be empty.", required = true)
+            @RequestParam(value = "color") String color) {
+        log.info("findAutomobileByColor() - start: color = {}", color);
+        Collection<Automobile> collection = repository.findByColor(color);
+        log.info("findAutomobileByColor() - end: collection = {}", collection);
+        return collection;
+    }
 }

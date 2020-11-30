@@ -8,4 +8,5 @@ import java.util.List;
 @RepositoryRestResource
 public interface AutomobileRepository extends JpaRepository<Automobile, Long> {
     List<Automobile> findByName(String name);
+    List<Automobile> findByColor(String name);
 }
