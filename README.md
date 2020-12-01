@@ -46,6 +46,8 @@ Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/ap
 * DELETE request to `/api/automobiles/4` deletes the "automobile" with ID 4;
 * DELETE request to `/api/automobiles/` deletes all the "automobiles".
 
+* GET request to `/api/automobiles?color=madeira-violet` returns the "automobile" with color by madeira-violet;
+
 or use Swagger API [http://localhost:8080/demo/swagger-ui.html](http://localhost:8080/demo/swagger-ui.html)
 
 and generation API docks [http://localhost:8080/demo/v3/api-docs.yaml](http://localhost:8080/demo/v3/api-docs.yaml)
