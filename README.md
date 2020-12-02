@@ -47,6 +47,7 @@ Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/ap
 * DELETE request to `/api/automobiles/` deletes all the "automobiles".
 
 * GET request to `/api/automobiles?color=madeira-violet` returns the "automobile" with color by madeira-violet;
+* GET request to `/api/automobiles?name=BMW&color=techno-violet` returns the "automobile" with name BMW and color by techno-violet;
 
 or use Swagger API [http://localhost:8080/demo/swagger-ui.html](http://localhost:8080/demo/swagger-ui.html)
 
