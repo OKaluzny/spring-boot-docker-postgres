@@ -157,4 +157,15 @@ public class AutomobileRestController {
         log.info("findAutomobileByColor() - end: collection = {}", collection);
         return collection;
     }
+
+    @GetMapping(value = "/automobiles", params = {"name", "color"})
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Automobile> findAutomobileByNameAndColor(
+            @Parameter(description = "Name of the Automobile to be obtained. Cannot be empty.", required = true)
+            @RequestParam(value = "name") String name, @RequestParam(value = "color") String color) {
+        log.info("findAutomobileByNameAndColor() - start: name = {}, color = {}", name, color);
+        Collection<Automobile> collection = repository.findByNameAndColor(name, color);
+        log.info("findAutomobileByNameAndColor() - end: collection = {}", collection);
+        return collection;
+    }
 }
