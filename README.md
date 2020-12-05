@@ -46,8 +46,9 @@ Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/ap
 * DELETE request to `/api/automobiles/4` deletes the "automobile" with ID 4;
 * DELETE request to `/api/automobiles/` deletes all the "automobiles".
 
-* GET request to `/api/automobiles?color=madeira-violet` returns the "automobile" with color by madeira-violet;
-* GET request to `/api/automobiles?name=BMW&color=techno-violet` returns the "automobile" with name BMW and color by techno-violet;
+* GET request to `/api/automobiles?color=madeira-violet` returns the "automobile"`s with color madeira-violet;
+* GET request to `/api/automobiles?name=BMW&color=techno-violet` returns the "automobile"`s with name BMW and color techno-violet;
+* GET request to `/api/automobiles??colorStartsWith=m` returns the "automobile"`s with color which starts with "m";
 
 or use Swagger API [http://localhost:8080/demo/swagger-ui.html](http://localhost:8080/demo/swagger-ui.html)
 
