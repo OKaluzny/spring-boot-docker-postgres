@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -173,9 +174,12 @@ public class AutomobileRestController {
     @GetMapping(value = "/automobiles", params = {"colorStartsWith"})
     @ResponseStatus(HttpStatus.OK)
     public Collection<Automobile> findAutomobileByColorStartsWith(
-            @RequestParam(value = "colorStartsWith") String colorStartsWith) {
+            @RequestParam(value = "colorStartsWith") String colorStartsWith,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
         log.info("findAutomobileByColorStartsWith() - start: color = {}", colorStartsWith);
-        Collection<Automobile> collection = repository.findByColorStartsWith(colorStartsWith, Sort.by("color"));
+        Collection<Automobile> collection = repository
+                .findByColorStartsWith(colorStartsWith, PageRequest.of(page, size, Sort.by("color")));
         log.info("findAutomobileByColorStartsWith() - end: collection = {}", collection);
         return collection;
     }

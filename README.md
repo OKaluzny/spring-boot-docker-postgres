@@ -48,7 +48,7 @@ Go to [http://localhost:8080/demo/api/automobiles](http://localhost:8080/demo/ap
 
 * GET request to `/api/automobiles?color=madeira-violet` returns the "automobile"`s with color madeira-violet;
 * GET request to `/api/automobiles?name=BMW&color=techno-violet` returns the "automobile"`s with name BMW and color techno-violet;
-* GET request to `/api/automobiles?colorStartsWith=m` returns the "automobile"`s with color which starts with "m";
+* GET request to `/api/automobiles?colorStartsWith=Ma&page=0&size=2` returns the "automobile"`s with color which starts with "m". Included Pagination and sorting;
 
 or use Swagger API [http://localhost:8080/demo/swagger-ui.html](http://localhost:8080/demo/swagger-ui.html)
 
