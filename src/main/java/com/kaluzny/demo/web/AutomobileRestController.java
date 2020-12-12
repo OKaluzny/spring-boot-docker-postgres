@@ -24,6 +24,8 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -182,5 +184,18 @@ public class AutomobileRestController {
                 .findByColorStartsWith(colorStartsWith, PageRequest.of(page, size, Sort.by("color")));
         log.info("findAutomobileByColorStartsWith() - end: collection = {}", collection);
         return collection;
+    }
+
+    @GetMapping("/automobiles-name")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getAllAutomobilesByName() {
+        log.info("getAllAutomobiles() - start");
+        List<Automobile> collection = repository.findAll();
+        List<String> collectionName = collection.stream()
+                .map(Automobile::getName)
+                .sorted()
+                .collect(Collectors.toList());
+        log.info("getAllAutomobiles() - end");
+        return collectionName;
     }
 }
