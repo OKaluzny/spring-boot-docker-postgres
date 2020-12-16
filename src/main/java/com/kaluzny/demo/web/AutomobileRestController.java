@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -63,6 +66,7 @@ public class AutomobileRestController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Automobile.class))))})
     @GetMapping("/automobiles")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "automobile")
     public Collection<Automobile> getAllAutomobiles() {
         log.info("getAllAutomobiles() - start");
         Collection<Automobile> collection = repository.findAll();
@@ -77,12 +81,13 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "404", description = "Automobile not found")})
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "automobile")
     public Automobile getAutomobileById(
             @Parameter(description = "Id of the Automobile to be obtained. Cannot be empty.", required = true)
             @PathVariable Long id) {
         log.info("getAutomobileById() - start: id = {}", id);
         Automobile receivedAutomobile = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Automobile with id = Not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
         log.info("getAutomobileById() - end: Automobile = {}", receivedAutomobile.getId());
         return receivedAutomobile;
     }
@@ -134,12 +139,18 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "404", description = "Automobile not found")})
     @DeleteMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeAutomobileById(
+    @CacheEvict(value = "automobile", key = "#id")
+    public boolean removeAutomobileById(
             @Parameter(description = "Id of the Automobile to be delete. Cannot be empty.", required = true)
             @PathVariable Long id) {
         log.info("removeAutomobileById() - start: id = {}", id);
-        repository.deleteById(id);
+        boolean deleted = false;
+        if (repository.existsById(id)) {
+            this.repository.deleteById(id);
+            deleted = true;
+        }
         log.info("removeAutomobileById() - end: id = {}", id);
+        return deleted;
     }
 
     @Hidden
@@ -186,7 +197,7 @@ public class AutomobileRestController {
         return collection;
     }
 
-    @GetMapping("/automobiles-name")
+    @GetMapping("/automobiles-names")
     @ResponseStatus(HttpStatus.OK)
     public List<String> getAllAutomobilesByName() {
         log.info("getAllAutomobiles() - start");
@@ -197,5 +208,13 @@ public class AutomobileRestController {
                 .collect(Collectors.toList());
         log.info("getAllAutomobiles() - end");
         return collectionName;
+    }
+
+    public Map<String, String> getAllAuto() {
+        List<Automobile> collection = repository.findAll();
+        Map<String, String> map = collection.stream()
+                .collect(Collectors.toMap(Automobile::getName, Automobile::getColor));
+        log.info("getAllAutomobiles() - end");
+        return map;
     }
 }
