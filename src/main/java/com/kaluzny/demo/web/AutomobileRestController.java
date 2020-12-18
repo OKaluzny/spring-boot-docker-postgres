@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,7 +28,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -81,7 +81,7 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "404", description = "Automobile not found")})
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "automobile")
+    @Cacheable(value = "automobile", sync = true)
     public Automobile getAutomobileById(
             @Parameter(description = "Id of the Automobile to be obtained. Cannot be empty.", required = true)
             @PathVariable Long id) {
@@ -116,6 +116,7 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "405", description = "Validation exception")})
     @PutMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value = "automobile", key = "#id")
     public Automobile refreshAutomobile(
             @Parameter(description = "Id of the Automobile to be update. Cannot be empty.", required = true)
             @PathVariable Long id,
@@ -200,21 +201,13 @@ public class AutomobileRestController {
     @GetMapping("/automobiles-names")
     @ResponseStatus(HttpStatus.OK)
     public List<String> getAllAutomobilesByName() {
-        log.info("getAllAutomobiles() - start");
+        log.info("getAllAutomobilesByName() - start");
         List<Automobile> collection = repository.findAll();
         List<String> collectionName = collection.stream()
                 .map(Automobile::getName)
                 .sorted()
                 .collect(Collectors.toList());
-        log.info("getAllAutomobiles() - end");
+        log.info("getAllAutomobilesByName() - end");
         return collectionName;
-    }
-
-    public Map<String, String> getAllAuto() {
-        List<Automobile> collection = repository.findAll();
-        Map<String, String> map = collection.stream()
-                .collect(Collectors.toMap(Automobile::getName, Automobile::getColor));
-        log.info("getAllAutomobiles() - end");
-        return map;
     }
 }
