@@ -1,5 +1,6 @@
 package com.kaluzny.demo.web;
 
+import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -78,7 +79,7 @@ public class AutomobileRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(schema = @Schema(implementation = Automobile.class))),
-            @ApiResponse(responseCode = "404", description = "Automobile not found")})
+            @ApiResponse(responseCode = "404", description = "There is no such automobile")})
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Cacheable(value = "automobile", sync = true)
@@ -87,7 +88,8 @@ public class AutomobileRestController {
             @PathVariable Long id) {
         log.info("getAutomobileById() - start: id = {}", id);
         Automobile receivedAutomobile = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
+                //.orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
+                .orElseThrow(ThereIsNoSuchAutoException::new);
         log.info("getAutomobileById() - end: Automobile = {}", receivedAutomobile.getId());
         return receivedAutomobile;
     }
@@ -129,7 +131,8 @@ public class AutomobileRestController {
                     entity.setColor(automobile.getColor());
                     return repository.save(entity);
                 })
-                .orElseThrow(() -> new EntityNotFoundException("Automobile with id = Not found"));
+                //.orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
+                .orElseThrow(ThereIsNoSuchAutoException::new);
         log.info("refreshAutomobile() - end: updatedAutomobile = {}", updatedAutomobile);
         return updatedAutomobile;
     }
