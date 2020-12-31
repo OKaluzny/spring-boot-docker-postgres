@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -171,10 +173,18 @@ public class AutomobileRestController {
     public Collection<Automobile> findAutomobileByColor(
             @Parameter(description = "Name of the Automobile to be obtained. Cannot be empty.", required = true)
             @RequestParam(value = "color") String color) {
+        Instant start = Instant.now();
+        log.info("findAutomobileByColor() - start: time = {}", start);
         log.info("findAutomobileByColor() - start: color = {}", color);
         Collection<Automobile> collection = repository.findByColor(color);
+        Instant end = Instant.now();
+        log.info("findAutomobileByColor() - end: milliseconds = {}", getTiming(start,end));
         log.info("findAutomobileByColor() - end: collection = {}", collection);
         return collection;
+    }
+
+    public static double getTiming(Instant start, Instant end){
+        return Duration.between(start, end).toMillis();
     }
 
     @GetMapping(value = "/automobiles", params = {"name", "color"})
