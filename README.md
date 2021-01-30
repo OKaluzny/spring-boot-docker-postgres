@@ -30,6 +30,10 @@ mvn clean install
 ```bash
 docker-compose up
 ```
+or
+```bash
+docker-compose -f docker-compose.yml up
+```
 
 Appendix A.
 

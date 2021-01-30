@@ -2,11 +2,8 @@
 spring:
   profiles:
     active: development
-  # Security configuration
-  security:
-    user:
-      name: user
-      password: user
+  main:
+    allow-bean-definition-overriding: true
   # Database
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -28,11 +25,12 @@ logging:
   pattern:
     console: "%d %-5level %logger : %msg%n"
   level:
-    org.springframework: info
+    org.springframework: debug
+    org.keycloak: info
     org.hibernate: debug
 # Server configuration
 server:
-  port: 8080 #set your port
+  port: 8088 #set your port
   servlet:
     context-path: /demo
 # Swagger configuration
@@ -41,3 +39,15 @@ springdoc:
     path: /swagger-ui.html # swagger-ui custom path
   api-docs:
     path: /v3/api-docs.yaml
+# ===============================================================================
+# Keycloak Configuration
+# ===============================================================================
+keycloak:
+  realm: automobile
+  auth-server-url: http://keycloak:8080/auth #${KEYCLOAK_FRONTEND_URL}
+  resource: app
+  credentials:
+    secret: 0db3a461-f0f8-4460-b959-ea9bd317187c
+  use-resource-role-mappings: true
+  bearer-only: true
+  ssl-required: external
