@@ -52,11 +52,79 @@ or
 ```bash
 docker-compose ps
 ```
-# Screenshots
+* Screenshot
 
-![Screenshot application list](/images/screenshot1.png)
+![Screenshot docker containers list](/images/screenshot1.png)
+*Screenshot with runnings containers*
 
-*Dashboard with desktop notifications*
+**3. Keycloak**
+
+Create Initial Admin User
+go to [http://localhost:8080/auth](http://localhost:8080/auth) and fill in the create initial admin form with username as `admin` and password as the `Pa55w0rd`.
+
+![Screenshot](/images/screenshot2.png)
+*Keycloak — Create Initial Admin*
+
+Click Create and proceed to administration console and then login with your created initial admin.
+
+![Screenshot](/images/screenshot3.png)
+*Keycloak — Log In Admin*
+
+The first screen Keycloak shows after login is the Master realm details.
+
+![Screenshot](/images/screenshot4.png)
+*Keycloak — Master Realm Details*
+
+### Create a Realm
+
+Let’s name our first realm `automobile`:
+
+![Screenshot](/images/screenshot5.png)
+*Keycloak — automobile*
+
+### Create a Role
+
+Roles are used to categorize the user. In an application, the permission to access resources is often granted to the role rather than the user. Admin, User, and Manager are all typical roles that may exist in an organization.
+
+To create a role, click the “Roles” menu on the left followed by the “Add Role” button on the page.
+
+![Screenshot](/images/screenshot6.png)
+*Keycloak — Add Role*
+
+### Create a User
+
+Keycloak does not come with any pre-created user, so let’s create our first user, “Oleg” Click on the `Users` menu on the left and then click the `Add User` button.
+
+![Screenshot](/images/screenshot7.png)
+*Keycloak — Add User*
+
+Oieg will require a password to login to Keycloak. Create a password credential for user your Oleg. Click on the “Credentials” tab and write both password and password confirmation as the `password`. Turn off the `Temporary password` switch so we do not need to change the password on the next login. Click “Set Password” to save your password credential.
+Finally, you need to assign the created `PERSON` role to Oleg. To do this, click on the Role Mappings tab, select the PERSON role, and click on “add selected”.
+
+### Add a Client
+
+Clients are entities that will request the authentication of a user. Clients come in two forms. The first type of client is an application that wants to participate in single-sign-on. These clients just want Keycloak to provide security for them. The other type of client is one that is requesting an access token so that it can invoke other services on behalf of the authenticated user.
+
+Let’s create a client that we will use to secure our Spring Boot REST service.
+
+Click on the Clients menu on the left and then click on Add Client.
+
+![Screenshot](/images/screenshot8.png)
+*Keycloak — Add Client*
+
+In the form, fill Client Id as `app`, select `OpenID Connect` for the Client Protocol and click Save.
+In the client details form, we need to change the `Access Type` to `confidential` instead of defaulted public (where client secret is not required). Turn on the `“Authorization Enabled”` switch before you save the details.
+
+### Request an Access Token
+
+A client requests a security token by making a Token Exchange request to the token endpoint in Keycloak using the HTTP POST method.
+Open your Postman and create a POST request to URL
+
+* POST request to [http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token](http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token)
+  
+![Screenshot](/images/screenshot9.png)
+*Postman — Token Exchange Request*
+
 
 **Guide for using endpoints the app:**
 
