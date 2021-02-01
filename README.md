@@ -1,5 +1,5 @@
 
-## Lightweight RESTful API with Spring Boot, PostgreSQL, JPA, Docker, Lombok, Spotify plugin, OpenAPI, etc.
+## Lightweight RESTful API with Spring Boot, Keycloak, Docker, PostgreSQL, JPA, Lombok, Spotify plugin, OpenAPI, etc.
 
 [![Build Status](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres.svg?branch=master)](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres)
 
@@ -118,12 +118,23 @@ In the client details form, we need to change the `Access Type` to `confidential
 ### Request an Access Token
 
 A client requests a security token by making a Token Exchange request to the token endpoint in Keycloak using the HTTP POST method.
-Open your Postman and create a POST request to URL
 
-* POST request to [http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token](http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token)
+Go to [http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token](http://localhost:8080/auth/realms/automobile/protocol/openid-connect/token)
   
 ![Screenshot](/images/screenshot9.png)
 *Postman — Token Exchange Request*
+
+Then copy `access token` and paste 
+
+![Screenshot](/images/screenshot10.png)
+*Postman — Token Exchange Request*
+
+or
+
+![Screenshot](/images/screenshot11.png)
+*Postman — Token Exchange Request*
+
+
 
 
 **Guide for using endpoints the app:**
