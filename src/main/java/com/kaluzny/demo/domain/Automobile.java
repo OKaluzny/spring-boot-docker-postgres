@@ -1,12 +1,10 @@
 package com.kaluzny.demo.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Size;
 import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -19,7 +17,7 @@ import lombok.*;
 @Schema(name = "Automobile", description = "Data object for an automobile", oneOf = Automobile.class)
 public class Automobile {
 
-    @Schema(description = "Unique identifier of the Automobile.", example = "1", required = false)
+    @Schema(description = "Unique identifier of the Automobile.", example = "1")
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -31,4 +29,13 @@ public class Automobile {
     @Schema(description = "Color of the Automobile.", example = "Red", required = true)
     @Size(max = 50)
     private String color;
+
+    @Column(name = "original_color")
+    private Boolean originalColor = Boolean.TRUE;
+
+    public void checkColor(Automobile automobile) {
+        if (automobile.color != null && !automobile.color.equals(this.color)) {
+            this.originalColor = false;
+        }
+    }
 }

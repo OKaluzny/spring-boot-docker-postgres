@@ -15,13 +15,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +48,7 @@ public class AutomobileRestController {
     @Transactional
     @PostConstruct
     public void init() {
-        repository.save(new Automobile(1L, "Ford", "Green"));
+        repository.save(new Automobile(1L, "Ford", "Green", true));
     }
 
     @Operation(summary = "Add a new Automobile", description = "endpoint for creating an entity", tags = {"Automobile"})
@@ -127,7 +125,7 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "405", description = "Validation exception")})
     @PutMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value = "automobile", key = "#id")
+    //@CachePut(value = "automobile", key = "#id")
     public Automobile refreshAutomobile(
             @Parameter(description = "Id of the Automobile to be update. Cannot be empty.", required = true)
             @PathVariable Long id,
@@ -136,6 +134,7 @@ public class AutomobileRestController {
         log.info("refreshAutomobile() - start: id = {}, automobile = {}", id, automobile);
         Automobile updatedAutomobile = repository.findById(id)
                 .map(entity -> {
+                    entity.checkColor(automobile);
                     entity.setName(automobile.getName());
                     entity.setColor(automobile.getColor());
                     return repository.save(entity);
