@@ -1,11 +1,12 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
-version: '3.7'
+version: '3.8'
 networks:
   backend:
-   name: app
-   driver: bridge
+    name: app
+    driver: bridge
 volumes:
-  postgres-data:
+  postgres_data:
+    driver: local
 # Define services
 services:
   # App backend service
@@ -15,15 +16,16 @@ services:
     container_name: web-app
     # Forward the exposed port 8080 on the container to port 8080 on the host machine
     ports:
-      - "8080:8080"
+      - "8088:8088"
     networks:
       - backend
     # This service depends on postgres. Start that first.
     depends_on:
       - db
+      - keycloak
     # Service health check
     healthcheck:
-      test: curl -f http://localhost:8080/demo/profile || exit 1
+      test: curl -f http://localhost:8088/demo/profile || exit 1
       interval: 1m
       timeout: 10s
       retries: 2
@@ -37,7 +39,7 @@ services:
     # Set a volume some that database is not lost after shutting down the container.
     # I used the name postgres-data but you can changed it to something else.
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - backend
     # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
@@ -55,3 +57,37 @@ services:
       interval: 1m
       timeout: 10s
       retries: 2
+  # Database Service (Postgres) for Keycloak
+  keycloak-db:
+    image: postgres
+    container_name: keycloak-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    networks:
+      - backend
+  # Auth service
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_FRONTEND_URL: http://localhost:8080/auth #redirect for docker
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - keycloak-db

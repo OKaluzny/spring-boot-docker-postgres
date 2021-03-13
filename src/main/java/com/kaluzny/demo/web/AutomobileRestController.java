@@ -1,8 +1,8 @@
 package com.kaluzny.demo.web;
 
-import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
+import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,11 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityNotFoundException;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.Instant;
@@ -42,6 +43,10 @@ public class AutomobileRestController {
 
     private final AutomobileRepository repository;
 
+    public static double getTiming(Instant start, Instant end) {
+        return Duration.between(start, end).toMillis();
+    }
+
     @Transactional
     @PostConstruct
     public void init() {
@@ -55,6 +60,8 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "409", description = "Automobile already exists")})
     @PostMapping("/automobiles")
     @ResponseStatus(HttpStatus.CREATED)
+    //@PreAuthorize("hasRole('PERSON')")
+    @RolesAllowed("PERSON")
     public Automobile saveAutomobile(
             @Parameter(description = "Automobile", required = true) @NotNull @RequestBody Automobile automobile) {
         log.info("saveAutomobile() - start: automobile = {}", automobile);
@@ -84,7 +91,7 @@ public class AutomobileRestController {
             @ApiResponse(responseCode = "404", description = "There is no such automobile")})
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "automobile", sync = true)
+    //@Cacheable(value = "automobile", sync = true)
     public Automobile getAutomobileById(
             @Parameter(description = "Id of the Automobile to be obtained. Cannot be empty.", required = true)
             @PathVariable Long id) {
@@ -178,13 +185,9 @@ public class AutomobileRestController {
         log.info("findAutomobileByColor() - start: color = {}", color);
         Collection<Automobile> collection = repository.findByColor(color);
         Instant end = Instant.now();
-        log.info("findAutomobileByColor() - end: milliseconds = {}", getTiming(start,end));
+        log.info("findAutomobileByColor() - end: milliseconds = {}", getTiming(start, end));
         log.info("findAutomobileByColor() - end: collection = {}", collection);
         return collection;
-    }
-
-    public static double getTiming(Instant start, Instant end){
-        return Duration.between(start, end).toMillis();
     }
 
     @GetMapping(value = "/automobiles", params = {"name", "color"})
