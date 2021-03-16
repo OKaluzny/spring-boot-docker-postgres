@@ -16,6 +16,11 @@ public class AwesomeExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new AwesomeException("There is no such automobile"), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AutoWasDeletedException.class)
+    protected ResponseEntity<AwesomeException> handleDeleteException() {
+        return new ResponseEntity<>(new AwesomeException("This auto was deleted"), HttpStatus.NOT_FOUND);
+    }
+
     @Data
     @AllArgsConstructor
     private static class AwesomeException {

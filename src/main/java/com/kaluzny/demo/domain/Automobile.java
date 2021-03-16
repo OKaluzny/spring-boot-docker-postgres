@@ -33,6 +33,8 @@ public class Automobile {
     @Column(name = "original_color")
     private Boolean originalColor = Boolean.TRUE;
 
+    private Boolean deleted = Boolean.FALSE;
+
     public void checkColor(Automobile automobile) {
         if (automobile.color != null && !automobile.color.equals(this.color)) {
             this.originalColor = false;

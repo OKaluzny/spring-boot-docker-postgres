@@ -2,6 +2,7 @@ package com.kaluzny.demo.web;
 
 import com.kaluzny.demo.domain.Automobile;
 import com.kaluzny.demo.domain.AutomobileRepository;
+import com.kaluzny.demo.exception.AutoWasDeletedException;
 import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,7 +49,7 @@ public class AutomobileRestController {
     @Transactional
     @PostConstruct
     public void init() {
-        repository.save(new Automobile(1L, "Ford", "Green", true));
+        repository.save(new Automobile(1L, "Ford", "Green", true, false));
     }
 
     @Operation(summary = "Add a new Automobile", description = "endpoint for creating an entity", tags = {"Automobile"})
@@ -97,6 +98,9 @@ public class AutomobileRestController {
         Automobile receivedAutomobile = repository.findById(id)
                 //.orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
                 .orElseThrow(ThereIsNoSuchAutoException::new);
+        if (receivedAutomobile.getDeleted()) {
+            throw new AutoWasDeletedException();
+        }
         log.info("getAutomobileById() - end: Automobile = {}", receivedAutomobile.getId());
         return receivedAutomobile;
     }
@@ -137,6 +141,9 @@ public class AutomobileRestController {
                     entity.checkColor(automobile);
                     entity.setName(automobile.getName());
                     entity.setColor(automobile.getColor());
+                    if (entity.getDeleted()) {
+                        throw new AutoWasDeletedException();
+                    }
                     return repository.save(entity);
                 })
                 //.orElseThrow(() -> new EntityNotFoundException("Automobile not found with id = " + id));
@@ -152,17 +159,16 @@ public class AutomobileRestController {
     @DeleteMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value = "automobile", key = "#id")
-    public boolean removeAutomobileById(
+    public String removeAutomobileById(
             @Parameter(description = "Id of the Automobile to be delete. Cannot be empty.", required = true)
             @PathVariable Long id) {
         log.info("removeAutomobileById() - start: id = {}", id);
-        boolean deleted = false;
-        if (repository.existsById(id)) {
-            this.repository.deleteById(id);
-            deleted = true;
-        }
+        Automobile deletedAutomobile = repository.findById(id)
+                .orElseThrow(ThereIsNoSuchAutoException::new);
+        deletedAutomobile.setDeleted(Boolean.TRUE);
+        repository.save(deletedAutomobile);
         log.info("removeAutomobileById() - end: id = {}", id);
-        return deleted;
+        return "Deleted";
     }
 
     @Hidden
