@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 
 
 @Entity
@@ -29,6 +30,10 @@ public class Automobile {
     @Schema(description = "Color of the Automobile.", example = "Red", required = true)
     @Size(max = 50)
     private String color;
+
+    private Instant creationDate = Instant.now();
+
+    private Instant updateDate = Instant.now();
 
     @Column(name = "original_color")
     private Boolean originalColor = Boolean.TRUE;

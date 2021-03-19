@@ -49,7 +49,7 @@ public class AutomobileRestController {
     @Transactional
     @PostConstruct
     public void init() {
-        repository.save(new Automobile(1L, "Ford", "Green", true, false));
+        repository.save(new Automobile(1L, "Ford", "Green", Instant.now(), Instant.now(), true, false));
     }
 
     @Operation(summary = "Add a new Automobile", description = "endpoint for creating an entity", tags = {"Automobile"})
@@ -141,6 +141,7 @@ public class AutomobileRestController {
                     entity.checkColor(automobile);
                     entity.setName(automobile.getName());
                     entity.setColor(automobile.getColor());
+                    entity.setUpdateDate(automobile.getUpdateDate());
                     if (entity.getDeleted()) {
                         throw new AutoWasDeletedException();
                     }
