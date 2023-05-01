@@ -1,21 +1,38 @@
 package com.kaluzny.demo.config;
 
-import org.springframework.context.annotation.Configuration;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
+import javax.sql.DataSource;
+
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    private final DataSource dataSource;
 
-        auth.inMemoryAuthentication()
-                .withUser("user").password("{noop}user").roles("USER")
-                .and()
-                .withUser("admin").password("{noop}admin").roles("USER", "ADMIN");
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(encoder())
+                .usersByUsernameQuery(
+                        "select username, password, enabled from users where username = ?")
+                .authoritiesByUsernameQuery(
+                        "select username, authority from authorities where username = ?");
     }
 
     @Override
@@ -25,11 +42,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/automobiles/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/automobiles").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT, "/api/automobiles/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/automobiles/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/automobiles/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.POST, "/api/automobiles/**").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/automobiles/**").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/automobiles/**").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
+
                 .and()
+
                 .csrf().disable()
                 .formLogin().disable();
     }
