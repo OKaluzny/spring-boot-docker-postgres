@@ -1,5 +1,7 @@
 # Spring Boot configuration
 spring:
+  application:
+    name: App
   profiles:
     active: development
   main:
@@ -20,14 +22,32 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+# Keycloak Configuration
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/automobile-realm
+      client:
+        registration:
+          keycloak:
+            client-id: automobile-management-api
+            client-secret: IdaFymmCJaKLhwp1gTnEpBRrE56BLyqy
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8180/login/oauth2/code/automobile-management-api
+            scope:
+              - openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/automobile-realm
 # Logger configuration
 logging:
   pattern:
     console: "%d %-5level %logger : %msg%n"
   level:
-    org.springframework: debug
+    #org.springframework: debug
     org.keycloak: info
-    org.hibernate: debug
+    #org.hibernate: debug
 # Server configuration
 server:
   port: 8088 #set your port
@@ -39,15 +59,3 @@ springdoc:
     path: /swagger-ui.html # swagger-ui custom path
   api-docs:
     path: /v3/api-docs.yaml
-# ===============================================================================
-# Keycloak Configuration
-# ===============================================================================
-keycloak:
-  realm: automobile
-  auth-server-url: http://keycloak:8080/auth #${KEYCLOAK_FRONTEND_URL}
-  resource: app
-  credentials:
-    secret: 0db3a461-f0f8-4460-b959-ea9bd317187c
-  use-resource-role-mappings: true
-  bearer-only: true
-  ssl-required: external

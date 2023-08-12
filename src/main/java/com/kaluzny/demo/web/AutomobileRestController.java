@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,9 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.security.RolesAllowed;
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -60,7 +59,7 @@ public class AutomobileRestController {
     @PostMapping("/automobiles")
     @ResponseStatus(HttpStatus.CREATED)
     //@PreAuthorize("hasRole('PERSON')")
-    @RolesAllowed("PERSON")
+    //@RolesAllowed("PERSON")
     public Automobile saveAutomobile(
             @Parameter(description = "Automobile", required = true) @NotNull @RequestBody Automobile automobile) {
         log.info("saveAutomobile() - start: automobile = {}", automobile);

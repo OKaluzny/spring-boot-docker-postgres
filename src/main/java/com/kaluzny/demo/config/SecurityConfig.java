@@ -1,65 +1,39 @@
 package com.kaluzny.demo.config;
 
-import org.keycloak.adapters.KeycloakConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-@KeycloakConfiguration
-//@EnableGlobalMethodSecurity(prePostEnabled = true) // enables PreAuthorize annotation
-@EnableGlobalMethodSecurity(jsr250Enabled = true) // enables RolesAllowed annotation
-class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        // SimpleAuthorityMapper is used to remove the ROLE_* conventions defined by Java so
-        // we can use only admin or user instead of ROLE_ADMIN and ROLE_USER
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-        auth.authenticationProvider(keycloakAuthenticationProvider);
-    }
+@Configuration
+@EnableWebSecurity
+class SecurityConfig {
 
     @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .authorizeHttpRequests(registry -> registry
+                        .requestMatchers("/api/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2Configurer -> oauth2Configurer
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwt -> {
+                            Map<String, Collection<String>> realmAccess = jwt.getClaim("realm_access");
+                            Collection<String> roles = realmAccess.get("roles");
+                            var grantedAuthorities = roles.stream()
+                                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                                    .collect(Collectors.toList());
+                            return new JwtAuthenticationToken(jwt, grantedAuthorities);
+                        })))
+        ;
+
+        return httpSecurity.build();
     }
-
-    @Bean
-    public KeycloakConfigResolver KeycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
-    }
-
-/*    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http.csrf().disable()
-                .antMatcher("/**")
-                .authorizeRequests()
-                .antMatchers("/")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
-    }*/
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http.authorizeRequests()
-                .anyRequest()
-                .permitAll();
-        http.csrf().disable();
-    }
-
 }

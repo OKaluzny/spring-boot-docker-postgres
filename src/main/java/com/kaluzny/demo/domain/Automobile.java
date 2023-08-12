@@ -1,20 +1,21 @@
 package com.kaluzny.demo.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.Instant;
 
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
 @Schema(name = "Automobile", description = "Data object for an automobile", oneOf = Automobile.class)
 public class Automobile {
 
