@@ -28,31 +28,20 @@ spring:
       resource-server:
         jwt:
           issuer-uri: http://localhost:8180/realms/automobile-realm
-      client:
-        registration:
-          keycloak:
-            client-id: automobile-management-api
-            client-secret: IdaFymmCJaKLhwp1gTnEpBRrE56BLyqy
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8180/login/oauth2/code/automobile-management-api
-            scope:
-              - openid
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8180/realms/automobile-realm
+          jwk-set-uri: http://localhost:8180/realms/automobile-realm/protocol/openid-connect/certs
+
 # Logger configuration
 logging:
   pattern:
     console: "%d %-5level %logger : %msg%n"
   level:
-    #org.springframework: debug
-    org.keycloak: info
+    org.springframework: info
     #org.hibernate: debug
 # Server configuration
 server:
   port: 8088 #set your port
-  servlet:
-    context-path: /demo
+  #servlet:
+   # context-path: /demo
 # Swagger configuration
 springdoc:
   swagger-ui:

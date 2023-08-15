@@ -115,29 +115,26 @@
             </plugin>
 
             <plugin>
-                <groupId>com.spotify</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>1.2.2</version>
-                <configuration>
-                    <imageName>${project.artifactId}</imageName>
-                    <baseImage>openjdk:17</baseImage>
-                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-                    <!-- copy the service's jar file from target into the root directory of the image -->
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
+                <version>0.43.0</version>
                 <executions>
                     <execution>
-                        <id>build-image</id>
+                        <id>docker-build</id>
                         <phase>package</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>spring-boot-keycloak-docker-postgres</name>
+                                    <build>
+                                        <dockerFile>${project.basedir}/Dockerfile</dockerFile>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

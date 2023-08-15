@@ -1,26 +1,30 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
-#version: '3.9'
-
-services: # <-- Define services
-  app: # <-- App backend service
-    # This service depends on postgres. Start that first.
+version: '3.9'
+# Define services
+services:
+  # App backend service
+  app:
+    # This service depends on postgres db and keycloak auth. Start that first.
     depends_on:
       db:
         condition: service_healthy
       keycloak:
         condition: service_started
     image: spring-boot-keycloak-docker-postgres:latest
+    build:
+      context: ./
+      dockerfile: "Dockerfile"
     # Give the container the name web-app. You can change to something else.
     container_name: web-app
-    #hostname: web-app
     # Forward the exposed port 8080 on the container to port 8080 on the host machine
     ports:
-      - 8088:8080
+      - "8088:8080"
     networks:
       - backend
-   # entrypoint: [ "java", "-Xms512m", "-Xmx1g", "-jar" ]
-  db: # <-- Database Service (Postgres)
-    # Use the Docker Image postgres. This will pull the 12 version.
+    # entrypoint: [ "java", "-Xms512m", "-Xmx1g", "-jar" ]
+  # Database Service (Postgres)
+  db:
+    # Use the Docker Image postgres. This will pull the 14 version.
     image: postgres:14-alpine
     # Give the container the name postgres-db. You can change to something else.
     container_name: postgres-db
@@ -46,9 +50,10 @@ services: # <-- Define services
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.1
     container_name: keycloak-auth
-    command: start-dev
+    command:
+      - "start-dev"
     ports:
-      - 8180:8080
+      - "8180:8080"
     networks:
       - backend
     environment:
@@ -61,7 +66,7 @@ services: # <-- Define services
       KC_DB_PASSWORD: password
       KC_HEALTH_ENABLED: true
     depends_on:
-        - keycloak-db
+       - keycloak-db
     #volumes:
     #  - /home/keycloak/automobile-realm.json:/opt/keycloak/data/import/automobile-realm.json
   # Database Service (Postgres) for Keycloak
@@ -78,6 +83,8 @@ services: # <-- Define services
       POSTGRES_PASSWORD: password
     networks:
       - backend
+    healthcheck:
+      test: "pg_isready -U keycloak"
 
 networks:
   backend:
