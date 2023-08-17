@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,15 +53,15 @@ public class AutomobileRestController {
         repository.save(new Automobile(1L, "Ford", "Green", Instant.now(), Instant.now(), true, false));
     }
 
-    @Operation(summary = "Add a new Automobile", description = "endpoint for creating an entity", tags = {"Automobile"})
+    /*@Operation(summary = "Add a new Automobile", description = "endpoint for creating an entity", tags = {"Automobile"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Automobile created"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "409", description = "Automobile already exists")})
+            @ApiResponse(responseCode = "409", description = "Automobile already exists")})*/
     @PostMapping("/automobiles")
     @ResponseStatus(HttpStatus.CREATED)
-    //@PreAuthorize("hasRole('PERSON')")
-    //@RolesAllowed("PERSON")
+    @PreAuthorize("hasRole('ADMIN')")
+    //@RolesAllowed("ADMIN")
     public Automobile saveAutomobile(
             @Parameter(description = "Automobile", required = true) @NotNull @RequestBody Automobile automobile) {
         log.info("saveAutomobile() - start: automobile = {}", automobile);
@@ -74,7 +76,8 @@ public class AutomobileRestController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Automobile.class))))})
     @GetMapping("/automobiles")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "automobile")
+    //@Cacheable(value = "automobile", sync = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public Collection<Automobile> getAllAutomobiles() {
         log.info("getAllAutomobiles() - start");
         Collection<Automobile> collection = repository.findAll();

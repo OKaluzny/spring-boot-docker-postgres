@@ -1,5 +1,5 @@
 
-## Lightweight RESTful API with Spring Boot, Keycloak, Docker, PostgreSQL, JPA, Lombok, Spotify plugin, OpenAPI, etc.
+## Lightweight RESTful API with Spring Boot 3, Keycloak 21, Docker, PostgreSQL, JPA, Lombok, OpenAPI, etc.
 
 [![Build Status](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres.svg?branch=master)](https://travis-ci.org/OKaluzny/spring-boot-docker-postgres)
 

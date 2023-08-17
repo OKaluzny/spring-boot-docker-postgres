@@ -113,8 +113,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-
-            <plugin>
+           <!-- <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.43.0</version>
@@ -137,7 +136,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>

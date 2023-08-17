@@ -4,13 +4,14 @@ spring:
     name: App
   profiles:
     active: development
-  main:
-    allow-bean-definition-overriding: true
+    #main:
+    # allow-bean-definition-overriding: true
   # Database
   datasource:
     driver-class-name: org.postgresql.Driver
     # For correct works with docker-compose, we need to change "localhost" to a service name, take from docker-compose.yml
-    url: jdbc:postgresql://db:5432/automobiles
+    #url: jdbc:postgresql://db:5432/automobiles
+    url: jdbc:postgresql://localhost:5432/automobiles
     username: postgres
     password: postgres
   # JPA properties
@@ -20,31 +21,42 @@ spring:
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    open-in-view: false
-    generate-ddl: true
-# Keycloak Configuration
+    #open-in-view: false
+    #generate-ddl: true
+  # Keycloak Configuration
   security:
     oauth2:
       resource-server:
         jwt:
           issuer-uri: http://localhost:8180/realms/automobile-realm
-          jwk-set-uri: http://localhost:8180/realms/automobile-realm/protocol/openid-connect/certs
-
+# Server configuration
+server:
+  port: 8080  #set your port
+  servlet:
+    context-path: /demo
 # Logger configuration
 logging:
   pattern:
     console: "%d %-5level %logger : %msg%n"
   level:
     org.springframework: info
+    org.springframework.security: debug
+    org.springframework.security.oauth2: debug
     #org.hibernate: debug
-# Server configuration
-server:
-  port: 8088 #set your port
-  #servlet:
-   # context-path: /demo
 # Swagger configuration
 springdoc:
   swagger-ui:
     path: /swagger-ui.html # swagger-ui custom path
   api-docs:
     path: /v3/api-docs.yaml
+# spring actuator
+management:
+  endpoints:
+    #enabled-by-default: true # If changed to false, you can enable separate functionality as indicated below
+    #endpoint: # here
+    # health:
+    #  enabled: true
+    web:
+      exposure:
+        # exclude: "*"
+        include: "*"

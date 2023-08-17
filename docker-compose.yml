@@ -3,59 +3,74 @@ version: '3.9'
 # Define services
 services:
   # App backend service
-  app:
+  #app:
     # This service depends on postgres db and keycloak auth. Start that first.
-    depends_on:
-      db:
-        condition: service_healthy
-      keycloak:
-        condition: service_started
-    image: spring-boot-keycloak-docker-postgres:latest
-    build:
-      context: ./
-      dockerfile: "Dockerfile"
+   # depends_on:
+    #  db:
+     #   condition: service_healthy
+      #keycloak:
+       # condition: service_started
+    #image: spring-boot-keycloak-docker-postgres:latest
+    #build:
+     # context: ./
+     # dockerfile: "Dockerfile"
     # Give the container the name web-app. You can change to something else.
-    container_name: web-app
+    #container_name: web-app
     # Forward the exposed port 8080 on the container to port 8080 on the host machine
-    ports:
-      - "8088:8080"
-    networks:
-      - backend
+    #ports:
+      # - "0.0.0.0:8088:8080/tcp"
+     # - target: 8080
+      #  host_ip: 0.0.0.0
+       # published: 8088
+        #protocol: tcp
+        #mode: host
+    #ports:
+     # - "8080:8080"
+    #networks:
+     # - backend
     # entrypoint: [ "java", "-Xms512m", "-Xmx1g", "-jar" ]
   # Database Service (Postgres)
-  db:
-    # Use the Docker Image postgres. This will pull the 14 version.
-    image: postgres:14-alpine
+  #db:
     # Give the container the name postgres-db. You can change to something else.
-    container_name: postgres-db
-    restart: always
+   # container_name: postgres-db
+    # Use the Docker Image postgres. This will pull the 14 version.
+    #image: postgres:14-alpine
+    #healthcheck:
+     # test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      #timeout: 45s
+      #interval: 10s
+      #retries: 10
+    #restart: always
     # Set a volume some that database is not lost after shutting down the container.
     # I used the name postgres-data, but you can change it to something else.
-    volumes:
-      - postgres_data_keycloak:/var/lib/postgresql/data
-    networks:
-      - backend
+    #volumes:
+     # - postgres_data_keycloak:/var/lib/postgresql/data
+    #networks:
+     # - backend
+    #network_mode: host
     # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
-    ports:
-      - "5432:5432"
+    #ports:
+     # - "5432:5432"
     # Set up the username, password, and database name. You can change these values.
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: automobiles
-      PGDATA: /var/lib/postgresql/data/pgdata
-    healthcheck:
-      test: "pg_isready -U postgres"
+    #environment:
+     # POSTGRES_USER: postgres
+      #POSTGRES_PASSWORD: postgres
+      #POSTGRES_DB: automobiles
+      #PGDATA: /var/lib/postgresql/data/pgdata
   # Auth service
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0.1
     container_name: keycloak-auth
+    image: quay.io/keycloak/keycloak:22.0.1
+    #build:
+     # context: .
+      #args:
+       # KEYCLOAK_VERSION: 22.0.1
     command:
       - "start-dev"
     ports:
       - "8180:8080"
     networks:
-      - backend
+      - keycloak
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
@@ -82,13 +97,19 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
     networks:
-      - backend
+      - keycloak
     healthcheck:
-      test: "pg_isready -U keycloak"
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
 
 networks:
-  backend:
-    name: app
+ # backend:
+  #  name: app
+   # driver: bridge
+  keycloak:
+    name: keycloak
     driver: bridge
 
 volumes:
