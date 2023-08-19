@@ -57,7 +57,7 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
     @GetMapping("/automobiles")
     @ResponseStatus(HttpStatus.OK)
     //@Cacheable(value = "automobile", sync = true)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public Collection<Automobile> getAllAutomobiles() {
         log.info("getAllAutomobiles() - start");
         Collection<Automobile> collection = repository.findAll();
@@ -68,6 +68,8 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
     @GetMapping("/automobiles/{id}")
     @ResponseStatus(HttpStatus.OK)
     //@Cacheable(value = "automobile", sync = true)
+    //TODO: We do not have PERSON on the user map
+    @PreAuthorize("hasRole('PERSON')")
     public Automobile getAutomobileById(@PathVariable Long id) {
         log.info("getAutomobileById() - start: id = {}", id);
         Automobile receivedAutomobile = repository.findById(id)

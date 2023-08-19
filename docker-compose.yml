@@ -36,7 +36,7 @@ services:
     # Use the Docker Image postgres. This will pull the 14 version.
     #image: postgres:14-alpine
     #healthcheck:
-     # test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+     # test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U" ]
       #timeout: 45s
       #interval: 10s
       #retries: 10
@@ -99,7 +99,7 @@ services:
     networks:
       - keycloak
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U" ]
       timeout: 45s
       interval: 10s
       retries: 10
