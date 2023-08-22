@@ -4,67 +4,67 @@ version: '3.9'
 services:
   # App backend service
   #app:
-    # This service depends on postgres db and keycloak auth. Start that first.
-   # depends_on:
-    #  db:
-     #   condition: service_healthy
-      #keycloak:
-       # condition: service_started
-    #image: spring-boot-keycloak-docker-postgres:latest
-    #build:
-     # context: ./
-     # dockerfile: "Dockerfile"
-    # Give the container the name web-app. You can change to something else.
-    #container_name: web-app
-    # Forward the exposed port 8080 on the container to port 8080 on the host machine
-    #ports:
-      # - "0.0.0.0:8088:8080/tcp"
-     # - target: 8080
-      #  host_ip: 0.0.0.0
-       # published: 8088
-        #protocol: tcp
-        #mode: host
-    #ports:
-     # - "8080:8080"
-    #networks:
-     # - backend
-    # entrypoint: [ "java", "-Xms512m", "-Xmx1g", "-jar" ]
+  # This service depends on postgres db and keycloak auth. Start that first.
+  # depends_on:
+  #  db:
+  #   condition: service_healthy
+  #keycloak:
+  # condition: service_started
+  #image: spring-boot-keycloak-docker-postgres:latest
+  #build:
+  # context: ./
+  # dockerfile: "Dockerfile"
+  # Give the container the name web-app. You can change to something else.
+  #container_name: web-app
+  # Forward the exposed port 8080 on the container to port 8080 on the host machine
+  #ports:
+  # - "0.0.0.0:8088:8080/tcp"
+  # - target: 8080
+  #  host_ip: 0.0.0.0
+  # published: 8088
+  #protocol: tcp
+  #mode: host
+  #ports:
+  # - "8080:8080"
+  #networks:
+  # - backend
+  # entrypoint: [ "java", "-Xms512m", "-Xmx1g", "-jar" ]
   # Database Service (Postgres)
   #db:
-    # Give the container the name postgres-db. You can change to something else.
-   # container_name: postgres-db
-    # Use the Docker Image postgres. This will pull the 14 version.
-    #image: postgres:14-alpine
-    #healthcheck:
-     # test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U" ]
-      #timeout: 45s
-      #interval: 10s
-      #retries: 10
-    #restart: always
-    # Set a volume some that database is not lost after shutting down the container.
-    # I used the name postgres-data, but you can change it to something else.
-    #volumes:
-     # - postgres_data_keycloak:/var/lib/postgresql/data
-    #networks:
-     # - backend
-    #network_mode: host
-    # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
-    #ports:
-     # - "5432:5432"
-    # Set up the username, password, and database name. You can change these values.
-    #environment:
-     # POSTGRES_USER: postgres
-      #POSTGRES_PASSWORD: postgres
-      #POSTGRES_DB: automobiles
-      #PGDATA: /var/lib/postgresql/data/pgdata
+  # Give the container the name postgres-db. You can change to something else.
+  # container_name: postgres-db
+  # Use the Docker Image postgres. This will pull the 14 version.
+  #image: postgres:14-alpine
+  #healthcheck:
+  # test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U" ]
+  #timeout: 45s
+  #interval: 10s
+  #retries: 10
+  #restart: always
+  # Set a volume some that database is not lost after shutting down the container.
+  # I used the name postgres-data, but you can change it to something else.
+  #volumes:
+  # - postgres_data_keycloak:/var/lib/postgresql/data
+  #networks:
+  # - backend
+  #network_mode: host
+  # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
+  #ports:
+  # - "5432:5432"
+  # Set up the username, password, and database name. You can change these values.
+  #environment:
+  # POSTGRES_USER: postgres
+  #POSTGRES_PASSWORD: postgres
+  #POSTGRES_DB: automobiles
+  #PGDATA: /var/lib/postgresql/data/pgdata
   # Auth service
   keycloak:
     container_name: keycloak-auth
     image: quay.io/keycloak/keycloak:22.0.1
-    #build:
-     # context: .
-      #args:
-       # KEYCLOAK_VERSION: 22.0.1
+      #build:
+      # context: .
+    #args:
+    # KEYCLOAK_VERSION: 22.0.1
     command:
       - "start-dev"
     ports:
@@ -81,7 +81,7 @@ services:
       KC_DB_PASSWORD: password
       KC_HEALTH_ENABLED: true
     depends_on:
-       - keycloak-db
+      - keycloak-db
     #volumes:
     #  - /home/keycloak/automobile-realm.json:/opt/keycloak/data/import/automobile-realm.json
   # Database Service (Postgres) for Keycloak
@@ -96,22 +96,58 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
-    networks:
-      - keycloak
+    networks: [ keycloak ]
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U" ]
       timeout: 45s
       interval: 10s
       retries: 10
 
+  activemq:
+    image: webcenter/activemq:latest
+    ports:
+      # mqtt
+      - "1883:1883"
+      # amqp
+      - "5672:5672"
+      # ui
+      - "8161:8161"
+      # stomp
+      - "61613:61613"
+      # ws
+      - "61614:61614"
+      # jms
+      - "61616:61616"
+    networks: [ activemq ]
+    volumes: [ "activemq-data:/opt/activemq/conf", "activemq-data:/data/activemq", "activemq-data:/var/log/activemq" ]
+    environment:
+      ACTIVEMQ_REMOVE_DEFAULT_ACCOUNT: "true"
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: password
+      ACTIVEMQ_WRITE_LOGIN: write
+      ACTIVEMQ_WRITE_PASSWORD: password
+      ACTIVEMQ_READ_LOGIN: read
+      ACTIVEMQ_READ_PASSWORD: password
+      ACTIVEMQ_JMX_LOGIN: jmx
+      ACTIVEMQ_JMX_PASSWORD: password
+
+      ACTIVEMQ_STATIC_TOPICS: static-topic-1;static-topic-2;autoTopic
+      ACTIVEMQ_STATIC_QUEUES: static-queue-1;static-queue-2
+      ACTIVEMQ_ENABLED_SCHEDULER: "true"
+      ACTIVEMQ_MIN_MEMORY: 512
+      ACTIVEMQ_MAX_MEMORY: 2048
+
 networks:
- # backend:
+  # backend:
   #  name: app
-   # driver: bridge
+  # driver: bridge
   keycloak:
     name: keycloak
     driver: bridge
+  activemq: { }
 
 volumes:
   postgres_data_keycloak:
+    driver: local
+  activemq-data:
     driver: local

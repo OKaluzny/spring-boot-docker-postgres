@@ -7,6 +7,7 @@ import com.kaluzny.demo.exception.ThereIsNoSuchAutoException;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;
+import jakarta.jms.Topic;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,23 +16,28 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
-public class AutomobileRestController implements AutomobileResource, AutomobileOpenApi {
+public class AutomobileRestController implements AutomobileResource, AutomobileOpenApi, JMSPublisher {
 
     private final AutomobileRepository repository;
+    private final JmsTemplate jmsTemplate;
 
     public static double getTiming(Instant start, Instant end) {
         return Duration.between(start, end).toMillis();
@@ -40,7 +46,7 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
     @Transactional
     @PostConstruct
     public void init() {
-        repository.save(new Automobile(1L, "Ford", "Green", Instant.now(), Instant.now(), true, false));
+        repository.save(new Automobile(1L, "Ford", "Green", LocalDateTime.now(), LocalDateTime.now(), true, false));
     }
 
     @PostMapping("/automobiles")
@@ -186,5 +192,21 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
                 .collect(Collectors.toList());
         log.info("getAllAutomobilesByName() - end");
         return collectionName;
+    }
+
+    @Override
+    @PostMapping("/message")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Automobile> pushMessage(@RequestBody Automobile automobile) {
+        try {
+            Topic autoTopic = Objects.requireNonNull(jmsTemplate
+                    .getConnectionFactory()).createConnection().createSession().createTopic("AutoTopic");
+            Automobile savedAutomobile = repository.save(automobile);
+            log.info("\u001B[32m" + "Sending Automobile with id: " + savedAutomobile.getId() + "\u001B[0m");
+            jmsTemplate.convertAndSend(autoTopic, savedAutomobile);
+            return new ResponseEntity<>(savedAutomobile, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

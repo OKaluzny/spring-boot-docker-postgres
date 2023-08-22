@@ -34,9 +34,11 @@ class SecurityConfig {
                                 .jwtAuthenticationConverter(jwt -> {
                                     Map<String, Collection<String>> realmAccess = jwt.getClaim("realm_access");
                                     Collection<String> roles = realmAccess.get("roles");
+
                                     var grantedAuthorities = roles.stream()
                                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                                             .collect(Collectors.toList());
+
                                     return new JwtAuthenticationToken(jwt, grantedAuthorities);
                                 })));
         return httpSecurity.build();

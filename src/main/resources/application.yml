@@ -29,6 +29,11 @@ spring:
       resource-server:
         jwt:
           issuer-uri: http://localhost:8180/realms/automobile-realm
+# JMS configuration
+  jms:
+    pub-sub-domain: true
+  activemq:
+    broker-url: tcp://localhost:61616
 # Server configuration
 server:
   port: 8080  #set your port
